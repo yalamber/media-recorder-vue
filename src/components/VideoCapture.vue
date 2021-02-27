@@ -1,25 +1,37 @@
 <template>
   <section class="video-cap-container" v-if="isValid">
     <div v-show="!isUploading" class="stream-container">
-      <video ref="videoRec" class="camera" muted loop controls autoplay />
+      <video
+        ref="videoRec"
+        v-show="!showRecordedPlayer"
+        class="camera"
+        muted
+        loop
+        autoplay
+      />
+      <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
         <template v-if="!isFinished">
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }}
           </button>
           <button v-else @click="stop" class="btn">
-            <span style="font-size: 3em">{{ stopBtnContent }}</span>
+            {{ stopBtnContent }}
           </button>
         </template>
       </div>
     </div>
+
     <Loader v-show="isUploading" />
     <div class="controls" v-if="isFinished && !isUploading">
       <button type="button" class="btn" @click.prevent="resetVideo">
         {{ cancelBtnContent }}
       </button>
-      <button type="button" class="btn" @click.prevent="done">
-        {{ doneBtnContent }}
+      <button type="button" class="btn" @click.prevent="upload">
+        {{ uploadBtnContent }}
+      </button>
+      <button type="button" class="btn" @click.prevent="playRecorded">
+        {{ playBtnContent }}
       </button>
     </div>
     <h1 class="error-video">{{ errText }}</h1>
@@ -40,11 +52,14 @@ export default {
     stopBtnContent: {
       default: "◼",
     },
+    playBtnContent: {
+      default: "➤",
+    },
     cancelBtnContent: {
       default: "Cancel",
     },
-    doneBtnContent: {
-      default: "OK",
+    uploadBtnContent: {
+      default: "Upload",
     },
   },
   components: {
@@ -59,9 +74,10 @@ export default {
       isFinished: false, // finished recording - action buttons indicator
       recorder: null, // component wide MediaRecorder
       connection: null, // component wide WebSocket
-      videoUrl: null, // link to video - assigned when done writing video file
       stream: null,
       recordedBlobs: null,
+      recordedUrl: null,
+      showRecordedPlayer: false,
     };
   },
   mounted() {
@@ -70,6 +86,10 @@ export default {
   methods: {
     // reset video display with media device media stream
     resetVideo() {
+      this.showRecordedPlayer = false;
+      this.recorderBlobs = null;
+      this.$refs.videoRecorded.src = null;
+      this.$refs.videoRecorded.srcObject = null;
       this.isFinished = false;
       this.isRecording = false;
       this.isLoading = true;
@@ -85,8 +105,20 @@ export default {
         .then(this.gotStream)
         .catch(() => (this.isValid = false));
     },
+    playRecorded() {
+      this.showRecordedPlayer = true;
+      const superBuffer = new Blob(this.recordedBlobs, {
+        type: "video/webm",
+      });
+      this.$refs.videoRecorded.src = null;
+      this.$refs.videoRecorded.srcObject = null;
+      this.$refs.videoRecorded.src = window.URL.createObjectURL(superBuffer);
+      this.$refs.videoRecorded.controls = true;
+      this.$refs.videoRecorded.play();
+    },
     // start recoording
     record() {
+      this.recordedBlobs = [];
       this.recorder.start();
       this.isRecording = true;
     },
@@ -96,9 +128,9 @@ export default {
       this.isRecording = false;
       this.isFinished = true;
     },
-    // reset video diaply and emit video file url
-    done() {
-      this.resetVideo();
+    upload() {
+      this.isUploading = true;
+      // this.resetVideo();
     },
     // initialize MediaRecorder and video element source
     gotStream(mediaStream) {
@@ -118,7 +150,6 @@ export default {
     // toggle video display
     toggleVideo() {
       this.$refs.videoRec.loop = !this.$refs.videoRec.loop;
-      this.$refs.videoRec.controls = !this.$refs.videoRec.controls;
     },
   },
   unmounted() {
@@ -129,6 +160,9 @@ export default {
 };
 </script>
 <style scoped>
+.controls button {
+  margin: 0 5px;
+}
 .video-cap-container {
   max-width: 100%;
 }

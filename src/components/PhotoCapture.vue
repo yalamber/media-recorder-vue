@@ -8,6 +8,7 @@
       playsinline
     />
     <canvas v-show="!showVideo" class="preview" ref="canvas" />
+    <Loader v-show="isUploading" />
     <div v-if="!hideBtns" class="center photo-capture-actions">
       <button
         :class="'btn flex-center ' + buttonsClasses"
@@ -20,21 +21,30 @@
         <button :class="'btn ' + buttonsClasses" @click.prevent="cancel">
           {{ cancelBtnContent }}
         </button>
-        <button :class="'btn ' + buttonsClasses" @click.prevent="done">
-          {{ doneBtnContent }}
+        <button :class="'btn ' + buttonsClasses" @click.prevent="upload">
+          {{ uploadBtnContent }}
         </button>
       </div>
     </div>
   </section>
 </template>
 <style scoped>
-video, canvas {
+video,
+canvas {
   width: 400px;
+}
+.controls button {
+  margin: 0 5px;
 }
 </style>
 <script>
+import Loader from "./Loader.vue";
+
 export default {
   name: "PhotoCapture",
+  components: {
+    Loader,
+  },
   props: {
     hideBtns: {
       type: Boolean,
@@ -62,8 +72,8 @@ export default {
     cancelBtnContent: {
       default: "Cancel",
     },
-    doneBtnContent: {
-      default: "OK",
+    uploadBtnContent: {
+      default: "Upload",
     },
   },
   data() {
@@ -71,6 +81,7 @@ export default {
       showVideo: true,
       picture: null,
       isValid: true,
+      isUploading: false,
     };
   },
   mounted() {
@@ -101,10 +112,8 @@ export default {
       this.stopVideoStream();
       this.picture = this.$refs.canvas.toDataURL();
     },
-    done() {
-      this.$emit("input", this.picture);
-      this.showVideo = true;
-      this.streamUserMediaVideo();
+    upload() {
+      console.log(this.picture);
     },
     cancel() {
       this.showVideo = true;
@@ -116,6 +125,13 @@ export default {
         track.stop();
       });
     },
+  },
+  unmounted() {
+    if (this.videoPlayer.srcObject) {
+      this.videoPlayer.srcObject.getTracks().forEach(function (track) {
+        track.stop();
+      });
+    }
   },
 };
 </script>
