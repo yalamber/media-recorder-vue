@@ -7,16 +7,31 @@
           <div class="modal-container">
             <div class="modal-header">
               <h3>Record your thoughts</h3>
-              <button class="modal-default-button" @click="active = false">
+              <button class="modal-close-button" @click="active = false">
                 x
               </button>
             </div>
             <div class="modal-body">
               <input type="text" placeholder="your email address" />
               <div class="media-buttons">
-                <button @click="mediaType = 'audio'">Audio</button>
-                <button @click="mediaType = 'video'">Video</button>
-                <button @click="mediaType = 'photo'">Photo</button>
+                <button
+                  @click="mediaType = 'audio'"
+                  :class="[(mediaType === 'audio' ? 'active' : 'inactive')]"
+                >
+                  Audio
+                </button>
+                <button
+                  @click="mediaType = 'video'"
+                  :class="[(mediaType === 'video' ? 'active' : 'inactive')]"
+                >
+                  Video
+                </button>
+                <button
+                  @click="mediaType = 'photo'"
+                  :class="[(mediaType === 'photo' ? 'active' : 'inactive')]"
+                >
+                  Photo
+                </button>
               </div>
               <div id="content-container">
                 <VideoCapture v-if="mediaType === 'video'" />
@@ -48,7 +63,7 @@ export default {
   components: {
     VideoCapture,
     AudioCapture,
-    PhotoCapture
+    PhotoCapture,
   },
 };
 </script>
@@ -104,7 +119,7 @@ export default {
 input {
   padding: 5px;
 }
-.modal-default-button {
+.modal-close-button {
   align-self: flex-start;
   border-radius: 50px;
   width: 25px;
@@ -124,5 +139,13 @@ input {
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
+}
+button {
+  border: 2px solid #000;
+  border-radius: 5px;
+  padding: 5px;
+}
+button.active {
+  background: #42b983;
 }
 </style>

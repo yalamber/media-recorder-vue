@@ -43,9 +43,6 @@ import Loader from "./Loader.vue";
 export default {
   name: "VideoCapture",
   props: {
-    uploadUrl: {
-      default: null,
-    },
     recordBtnContent: {
       default: "Record",
     },
@@ -168,5 +165,10 @@ export default {
 }
 video {
   width: 400px;
+}
+button.btn {
+  border: 2px solid #000;
+  border-radius: 5px;
+  padding: 5px;
 }
 </style>
