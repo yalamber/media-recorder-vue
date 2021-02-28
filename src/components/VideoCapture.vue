@@ -166,6 +166,12 @@ export default {
 video {
   width: 400px;
 }
+
+@media only screen and (max-width: 600px) {
+  video {
+    width: 100%;
+  }
+}
 button.btn {
   border: 2px solid #000;
   border-radius: 5px;

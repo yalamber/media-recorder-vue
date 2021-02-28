@@ -33,6 +33,12 @@ video,
 canvas {
   width: 400px;
 }
+
+@media only screen and (max-width: 600px) {
+  video, canvas {
+    width: 100%;
+  }
+}
 .controls button {
   margin: 0 5px;
 }
