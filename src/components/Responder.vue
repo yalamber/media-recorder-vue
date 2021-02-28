@@ -68,7 +68,8 @@ export default {
   },
   methods: {
     onSubmit: () => {
-      
+      console.log(this.email)
+      console.log(this.mediaType) 
     }
   }
 };
@@ -157,6 +158,8 @@ button {
   border: 2px solid #000;
   border-radius: 5px;
   padding: 5px;
+  background: #fff;
+  color: #000;
 }
 button.active {
   background: #42b983;

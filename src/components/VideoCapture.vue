@@ -75,8 +75,8 @@ export default {
       stream: null,
       recordedBlobs: null,
       recordedUrl: null,
-      showRecordedPlayer: false,
-    };
+      showRecordedPlayer: false
+    }
   },
   mounted() {
     this.resetVideo();
@@ -102,8 +102,9 @@ export default {
     },
     playRecorded() {
       this.showRecordedPlayer = true;
+      console.log(this.containerType)
       const superBuffer = new Blob(this.recordedBlobs, {
-        type: "video/webm",
+        type: this.containerType,
       });
       this.$refs.videoRecorded.src = null;
       this.$refs.videoRecorded.srcObject = null;
@@ -193,5 +194,7 @@ button.btn {
   border: 2px solid #000;
   border-radius: 5px;
   padding: 5px;
+  background: #fff;
+  color: #000;
 }
 </style>
