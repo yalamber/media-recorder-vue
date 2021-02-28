@@ -56,6 +56,7 @@ export default {
   },
   data() {
     return {
+      containerType: "video/webm",
       errText: null,
       isValid: true,
       isUploading: false,
@@ -87,15 +88,9 @@ export default {
         .catch(() => (this.isValid = false));
     },
     playRecorded() {
-      let extension
-      if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
-        extension = "webm";
-      } else {
-        extension = "ogg";
-      }
       this.showRecordedPlayer = true;
       const superBuffer = new Blob(this.recordedBlobs, {
-        mimeType : 'audio/'+extension+';codecs=opus',
+        mimeType : this.containerType,
       });
       this.$refs.audioRecorded.src = null;
       this.$refs.audioRecorded.srcObject = null;
@@ -120,17 +115,25 @@ export default {
     },
     // initialize MediaRecorder and video element source
     gotStream(mediaStream) {
-      let extension
-      if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
-        extension = "webm";
-      } else {
-        extension = "ogg";
-      }
       this.stream = mediaStream;
-      this.recorder = new MediaRecorder(mediaStream, {
-        mimeType : 'audio/'+extension+';codecs=opus',
-        audioBitsPerSecond: 128000,
-      });
+      try {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        window.audioContext = new AudioContext();
+      } catch (e) {
+        console.error("Web Audio API not supported.");
+      }
+      if (typeof MediaRecorder.isTypeSupported == "function") {
+        let options;
+        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+          options = { mimeType: "audio/webm;codecs=opus" };
+        } else if (MediaRecorder.isTypeSupported("audio/ogg")) {
+          this.containerType = "audio/ogg";
+          options = { mimeType: "audio/ogg" };
+        }
+        this.recorder = new MediaRecorder(mediaStream, options);
+      } else {
+        this.recorder = new MediaRecorder(mediaStream);
+      }
       this.recorder.ondataavailable = this.audioDataHandler;
     },
     audioDataHandler(event) {
@@ -158,5 +161,7 @@ button.btn {
   border: 2px solid #000;
   border-radius: 5px;
   padding: 5px;
+  background: #fff;
+  color: #000;
 }
 </style>

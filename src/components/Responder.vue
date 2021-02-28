@@ -6,7 +6,7 @@
         <div class="modal-wrapper">
           <div class="modal-container">
             <div class="modal-header">
-              <h3>Record your thoughts</h3>
+              <h3>Record media</h3>
               <button class="modal-close-button" @click="active = false">
                 x
               </button>
