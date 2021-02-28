@@ -39,11 +39,9 @@
 </template>
 
 <script>
-import ElementMixin from "../mixins/ElementMixin";
 import Loader from "./Loader.vue";
 export default {
   name: "VideoCapture",
-  mixins: [ElementMixin],
   props: {
     recordBtnContent: {
       default: "Record",
@@ -66,6 +64,7 @@ export default {
   },
   data() {
     return {
+      containerType: "video/webm",
       errText: null,
       isValid: true,
       isUploading: false,
@@ -131,10 +130,29 @@ export default {
     // initialize MediaRecorder and video element source
     gotStream(mediaStream) {
       this.stream = mediaStream;
-      this.recorder = new MediaRecorder(mediaStream, {
-        mimeType: "video/webm",
-        audioBitsPerSecond: 128000,
-      });
+      try {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        window.audioContext = new AudioContext();
+      } catch (e) {
+        console.error("Web Audio API not supported.");
+      }
+      if (typeof MediaRecorder.isTypeSupported == "function") {
+        let options;
+        if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
+          options = { mimeType: "video/webm;codecs=vp9" };
+        } else if (MediaRecorder.isTypeSupported("video/webm;codecs=h264")) {
+          options = { mimeType: "video/webm;codecs=h264" };
+        } else if (MediaRecorder.isTypeSupported("video/webm")) {
+          options = { mimeType: "video/webm" };
+        } else if (MediaRecorder.isTypeSupported("video/mp4")) {
+          //Safari 14.0.2 has an EXPERIMENTAL version of MediaRecorder enabled by default
+          this.containerType = "video/mp4";
+          options = { mimeType: "video/mp4" };
+        }
+        this.recorder = new MediaRecorder(mediaStream, options);
+      } else {
+        this.recorder = new MediaRecorder(mediaStream);
+      }
       this.recorder.ondataavailable = this.videoDataHandler;
       this.$refs.videoRec.src = null;
       this.$refs.videoRec.srcObject = mediaStream;
