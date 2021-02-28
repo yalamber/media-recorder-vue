@@ -39,9 +39,11 @@
 </template>
 
 <script>
+import ElementMixin from "../mixins/ElementMixin";
 import Loader from "./Loader.vue";
 export default {
   name: "VideoCapture",
+  mixins: [ElementMixin],
   props: {
     recordBtnContent: {
       default: "Record",
