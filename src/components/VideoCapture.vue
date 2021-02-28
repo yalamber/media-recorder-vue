@@ -93,10 +93,7 @@ export default {
       this.$refs.videoRec.muted = true;
       navigator.mediaDevices
         .getUserMedia({
-          video: {
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-          },
+          video: true,
           audio: true,
         })
         .then(this.gotStream)
@@ -170,7 +167,6 @@ video {
 @media only screen and (max-width: 600px) {
   video {
     width: 100%;
-    height: 200px;
   }
 }
 button.btn {
