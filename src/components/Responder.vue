@@ -12,8 +12,9 @@
               </button>
             </div>
             <div class="modal-body">
-              <input type="text" placeholder="your email address" />
+              <input type="text" v-model="email" placeholder="your email address" />
               <div class="media-buttons">
+                Respond in:
                 <button
                   @click="mediaType = 'audio'"
                   :class="[(mediaType === 'audio' ? 'active' : 'inactive')]"
@@ -65,6 +66,11 @@ export default {
     AudioCapture,
     PhotoCapture,
   },
+  methods: {
+    onSubmit: () => {
+      
+    }
+  }
 };
 </script>
 <style scoped>
@@ -86,8 +92,8 @@ export default {
 }
 
 .modal-container {
-  width: 500px;
   max-width: 100%;
+  width: 500px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
@@ -96,7 +102,12 @@ export default {
   transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
 }
-
+@media only screen and (max-width: 600px) {
+  .modal-container {
+    width: inherit;
+    margin: 0px auto;
+  }
+}
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -116,8 +127,10 @@ export default {
 .modal-body button {
   margin: 0 5px;
 }
-input {
+.modal-body input {
   padding: 5px;
+  width: 250px;
+  max-width: 100%;
 }
 .modal-close-button {
   align-self: flex-start;
