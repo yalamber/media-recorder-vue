@@ -16,12 +16,6 @@
               <div class="media-buttons">
                 Respond in:
                 <button
-                  @click="mediaType = 'audio'"
-                  :class="[(mediaType === 'audio' ? 'active' : 'inactive')]"
-                >
-                  Audio
-                </button>
-                <button
                   @click="mediaType = 'video'"
                   :class="[(mediaType === 'video' ? 'active' : 'inactive')]"
                 >
@@ -32,6 +26,12 @@
                   :class="[(mediaType === 'photo' ? 'active' : 'inactive')]"
                 >
                   Photo
+                </button>
+                <button
+                  @click="mediaType = 'audio'"
+                  :class="[(mediaType === 'audio' ? 'active' : 'inactive')]"
+                >
+                  Audio
                 </button>
               </div>
               <div id="content-container">
