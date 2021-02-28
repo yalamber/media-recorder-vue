@@ -170,6 +170,7 @@ video {
 @media only screen and (max-width: 600px) {
   video {
     width: 100%;
+    height: 200px;
   }
 }
 button.btn {
