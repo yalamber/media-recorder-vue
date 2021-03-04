@@ -14,9 +14,11 @@
         <template v-if="!isFinished">
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }}
+            <font-awesome-icon style="color: red" icon="record-vinyl" />
           </button>
-          <button v-else @click="stop" class="btn">
-            {{ stopBtnContent }}
+          <button v-else @click="stop" class="btn btn-rec">
+            <font-awesome-icon style="color: red" icon="stop-circle" />
+            <p>Recording...</p>
           </button>
         </template>
       </div>
@@ -31,7 +33,7 @@
         {{ uploadBtnContent }}
       </button>
       <button type="button" class="btn" @click.prevent="playRecorded">
-        {{ playBtnContent }}
+        <font-awesome-icon icon="play" />
       </button>
     </div>
     <h1 class="error-video">{{ errText }}</h1>
@@ -45,12 +47,6 @@ export default {
   props: {
     recordBtnContent: {
       default: "Record",
-    },
-    stopBtnContent: {
-      default: "◼",
-    },
-    playBtnContent: {
-      default: "➤",
     },
     cancelBtnContent: {
       default: "Cancel",
@@ -75,8 +71,8 @@ export default {
       stream: null,
       recordedBlobs: null,
       recordedUrl: null,
-      showRecordedPlayer: false
-    }
+      showRecordedPlayer: false,
+    };
   },
   mounted() {
     this.resetVideo();
@@ -102,12 +98,11 @@ export default {
     },
     playRecorded() {
       this.showRecordedPlayer = true;
-      const superBuffer = new Blob([this.recordedBlobs], {
-        type: this.containerType,
-      });
       this.$refs.videoRecorded.src = null;
       this.$refs.videoRecorded.srcObject = null;
-      this.$refs.videoRecorded.src = window.URL.createObjectURL(superBuffer);
+      this.$refs.videoRecorded.src = window.URL.createObjectURL(
+        this.recordedBlobs
+      );
       this.$refs.videoRecorded.controls = true;
       this.$refs.videoRecorded.play();
     },
@@ -123,7 +118,33 @@ export default {
       this.isFinished = true;
     },
     upload() {
-      this.isUploading = true;
+      let options;
+      if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
+        options = { mimeType: "video/webm;codecs=vp9" };
+      } else if (MediaRecorder.isTypeSupported("video/webm;codecs=h264")) {
+        options = { mimeType: "video/webm;codecs=h264" };
+      } else if (MediaRecorder.isTypeSupported("video/webm")) {
+        options = { mimeType: "video/webm" };
+      } else if (MediaRecorder.isTypeSupported("video/mp4")) {
+        //Safari 14.0.2 has an EXPERIMENTAL version of MediaRecorder enabled by default
+        this.containerType = "video/mp4";
+        options = { mimeType: "video/mp4" };
+      }
+      const blob = new Blob([this.recordedBlobs], {
+        type: options,
+        bitsPerSecond: 128000,
+      });
+      const url = window.URL.createObjectURL(blob);
+
+      let link = document.createElement("a");
+      link.href = url;
+      link.download = new Date().toISOString() + "." + "mp4";
+      link.innerHTML = link.download;
+      link.click();
+
+      console.log("blob", blob);
+      console.log("url", url);
+      //this.isUploading = true;
       // this.resetVideo();
     },
     // initialize MediaRecorder and video element source
@@ -152,7 +173,6 @@ export default {
       this.toggleVideo();
     },
     videoDataHandler(event) {
-      console.log('pushing video blobs')
       this.recordedBlobs = event.data;
     },
     // toggle video display
@@ -160,7 +180,7 @@ export default {
       this.$refs.videoRec.loop = !this.$refs.videoRec.loop;
     },
   },
-  unmounted() {
+  beforeDestroy() {
     this.stream.getTracks().forEach(function (track) {
       track.stop();
     });
@@ -189,5 +209,21 @@ button.btn {
   padding: 5px;
   background: #fff;
   color: #000;
+  margin-top: 10px;
+}
+button.btn-rec {
+  padding: 2px 5px;
+  border: none;
+  outline: none;
+  font-size: 46px;
+}
+.video-actions-wrapper p {
+  font-size: 14px;
+  margin: 0px;
+  padding: 5px 0 0 0;
+}
+video {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
 }
 </style>

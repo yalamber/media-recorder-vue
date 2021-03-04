@@ -1,18 +1,18 @@
 <template>
-  <div>
+  <div id="app">
     <Responder label="Respond" />
   </div>
 </template>
 
 <script>
-import Responder from "./components/Responder.vue";
+import Responder from './components/Responder.vue'
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
-    Responder,
-  },
-};
+    Responder
+  }
+}
 </script>
 
 <style>
@@ -22,6 +22,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
 }
 </style>

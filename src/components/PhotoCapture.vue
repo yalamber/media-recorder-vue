@@ -16,6 +16,7 @@
         v-if="showVideo"
       >
         {{ captureBtnContent }}
+        <font-awesome-icon style="color: red" icon="camera" />
       </button>
       <div class="controls" v-else>
         <button :class="'btn ' + buttonsClasses" @click.prevent="cancel">
@@ -35,12 +36,25 @@ canvas {
 }
 
 @media only screen and (max-width: 600px) {
-  video, canvas {
+  video,
+  canvas {
     width: 100%;
   }
 }
 .controls button {
   margin: 0 5px;
+}
+button.btn {
+  border: 2px solid #000;
+  border-radius: 5px;
+  padding: 5px;
+  background: #fff;
+  color: #000;
+  margin-top: 10px;
+}
+video {
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
 }
 </style>
 <script>
@@ -119,7 +133,11 @@ export default {
       this.picture = this.$refs.canvas.toDataURL();
     },
     upload() {
-      console.log(this.picture);
+      var a = document.createElement("a");
+      a.href = this.picture;
+      a.download = new Date().toISOString() + "." + "png";
+      a.click();
+      //console.log(this.picture);
     },
     cancel() {
       this.showVideo = true;
@@ -132,7 +150,7 @@ export default {
       });
     },
   },
-  unmounted() {
+  beforeDestroy() {
     if (this.videoPlayer.srcObject) {
       this.videoPlayer.srcObject.getTracks().forEach(function (track) {
         track.stop();

@@ -1,6 +1,8 @@
 <template>
   <div class="respond">
-    <button id="show-modal" @click="active = true">{{ label }}</button>
+    <button class="respnod-bttn" id="show-modal" @click="active = true">
+      {{ label }} <font-awesome-icon style="color: red" icon="record-vinyl" />
+    </button>
     <transition v-if="active" name="modal">
       <div class="modal-mask">
         <div class="modal-wrapper">
@@ -8,29 +10,33 @@
             <div class="modal-header">
               <h3>Record media</h3>
               <button class="modal-close-button" @click="active = false">
-                x
+                <font-awesome-icon icon="window-close" />
               </button>
             </div>
             <div class="modal-body">
-              <input type="text" v-model="email" placeholder="your email address" />
+              <input
+                type="text"
+                v-model="email"
+                placeholder="your email address"
+              />
               <div class="media-buttons">
                 <button
                   @click="mediaType = 'video'"
-                  :class="[(mediaType === 'video' ? 'active' : 'inactive')]"
+                  :class="[mediaType === 'video' ? 'active' : 'inactive']"
                 >
-                  Video
+                  <font-awesome-icon icon="video" /> Video
                 </button>
                 <button
                   @click="mediaType = 'photo'"
-                  :class="[(mediaType === 'photo' ? 'active' : 'inactive')]"
+                  :class="[mediaType === 'photo' ? 'active' : 'inactive']"
                 >
-                  Photo
+                  <font-awesome-icon icon="image" /> Photo
                 </button>
                 <button
                   @click="mediaType = 'audio'"
-                  :class="[(mediaType === 'audio' ? 'active' : 'inactive')]"
+                  :class="[mediaType === 'audio' ? 'active' : 'inactive']"
                 >
-                  Audio
+                  <font-awesome-icon icon="microphone" /> Audio
                 </button>
               </div>
               <div id="content-container">
@@ -67,10 +73,10 @@ export default {
   },
   methods: {
     onSubmit: () => {
-      console.log(this.email)
-      console.log(this.mediaType) 
-    }
-  }
+      console.log(this.email);
+      console.log(this.mediaType);
+    },
+  },
 };
 </script>
 <style scoped>
@@ -87,7 +93,6 @@ export default {
 }
 
 .modal-wrapper {
-  overflow: scroll;
   display: table-cell;
   vertical-align: middle;
 }
@@ -98,7 +103,7 @@ export default {
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
-  border-radius: 2px;
+  border-radius: 5px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
@@ -123,7 +128,7 @@ export default {
   margin: 20px 0;
 }
 .media-buttons {
-  padding: 10px;
+  padding: 15px;
 }
 .modal-body button {
   margin: 0 5px;
@@ -133,12 +138,18 @@ export default {
   width: 250px;
   max-width: 100%;
 }
+.modal-container {
+  position: relative;
+}
 .modal-close-button {
-  align-self: flex-start;
-  border-radius: 50px;
-  width: 25px;
-  padding: 5px;
+  outline: none;
   border: none;
+  font-size: 18px;
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  padding: 0px;
+  background: transparent;
 }
 
 .modal-enter {
@@ -160,6 +171,9 @@ button {
   padding: 5px;
   background: #fff;
   color: #000;
+}
+.respond button.respnod-bttn {
+  padding: 10px 15px;
 }
 button.active {
   background: #42b983;

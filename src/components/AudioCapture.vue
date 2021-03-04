@@ -6,13 +6,16 @@
         <template v-if="!isFinished">
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }}
+            <font-awesome-icon style="color: red" icon="record-vinyl" />
           </button>
-          <button v-else @click="stop" class="btn">
-            {{ stopBtnContent }}
+          <button v-else @click="stop" class="btn btn-rec">
+            <font-awesome-icon style="color: red" icon="stop-circle" />
+            <p>Recording...</p>
           </button>
         </template>
       </div>
     </div>
+
     <Loader v-show="isUploading" />
     <div class="controls" v-if="isFinished && !isUploading">
       <button type="button" class="btn" @click.prevent="resetAudio">
@@ -22,7 +25,7 @@
         {{ uploadBtnContent }}
       </button>
       <button type="button" class="btn" @click.prevent="playRecorded">
-        {{ playBtnContent }}
+        <font-awesome-icon icon="play" />
       </button>
     </div>
     <h1 class="error-video">{{ errText }}</h1>
@@ -31,17 +34,12 @@
 
 <script>
 import Loader from "./Loader.vue";
+
 export default {
   name: "AudioCapture",
   props: {
     recordBtnContent: {
       default: "Record",
-    },
-    stopBtnContent: {
-      default: "◼",
-    },
-    playBtnContent: {
-      default: "➤",
     },
     cancelBtnContent: {
       default: "Cancel",
@@ -89,7 +87,9 @@ export default {
       this.showRecordedPlayer = true;
       this.$refs.audioRecorded.src = null;
       this.$refs.audioRecorded.srcObject = null;
-      this.$refs.audioRecorded.src = window.URL.createObjectURL(this.recordedBlobs);
+      this.$refs.audioRecorded.src = window.URL.createObjectURL(
+        this.recordedBlobs
+      );
       this.$refs.audioRecorded.controls = true;
       this.$refs.audioRecorded.play();
     },
@@ -105,7 +105,31 @@ export default {
       this.isFinished = true;
     },
     upload() {
-      this.isUploading = true;
+      let options;
+      if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+        options = { mimeType: "audio/webm;codecs=opus" };
+      } else if (MediaRecorder.isTypeSupported("audio/ogg")) {
+        this.containerType = "audio/ogg";
+        options = { mimeType: "audio/ogg" };
+      } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
+        this.containerType = "audio/mp4";
+        options = { mimeType: "audio/mp4" };
+      }
+      const blob = new Blob([this.recordedBlobs], {
+        type: options,
+        bitsPerSecond: 128000,
+      });
+      const url = window.URL.createObjectURL(blob);
+
+      let link = document.createElement("a");
+      link.href = url;
+      link.download = new Date().toISOString() + "." + "webm";
+      link.innerHTML = link.download;
+      link.click();
+
+      console.log("blob", blob);
+      console.log("url", url);
+      //this.isUploading = true;
     },
     // initialize MediaRecorder and video element source
     gotStream(mediaStream) {
@@ -114,11 +138,10 @@ export default {
       this.recorder.ondataavailable = this.audioDataHandler;
     },
     audioDataHandler(event) {
-      console.log('hear here')
       this.recordedBlobs = event.data;
     },
   },
-  unmounted() {
+  beforeDestroy() {
     this.stream.getTracks().forEach(function (track) {
       track.stop();
     });
@@ -141,5 +164,17 @@ button.btn {
   padding: 5px;
   background: #fff;
   color: #000;
+  margin-top: 10px;
+}
+button.btn-rec {
+  padding: 2px 5px;
+  border: none;
+  outline: none;
+  font-size: 46px;
+}
+.audio-actions-wrapper p {
+  font-size: 14px;
+  margin: 0px;
+  padding: 5px 0 0 0;
 }
 </style>
