@@ -102,7 +102,7 @@ export default {
     },
     playRecorded() {
       this.showRecordedPlayer = true;
-      const superBuffer = new Blob(this.recordedBlobs, {
+      const superBuffer = new Blob([this.recordedBlobs], {
         type: this.containerType,
       });
       this.$refs.videoRecorded.src = null;
@@ -113,7 +113,6 @@ export default {
     },
     // start recoording
     record() {
-      this.recordedBlobs = [];
       this.recorder.start();
       this.isRecording = true;
     },
@@ -154,7 +153,7 @@ export default {
     },
     videoDataHandler(event) {
       console.log('pushing video blobs')
-      this.recordedBlobs.push(event.data);
+      this.recordedBlobs = event.data;
     },
     // toggle video display
     toggleVideo() {
