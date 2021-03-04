@@ -55,7 +55,6 @@ export default {
   },
   data() {
     return {
-      containerType: "audio/webm",
       errText: null,
       isValid: true,
       isUploading: false,
@@ -88,18 +87,14 @@ export default {
     },
     playRecorded() {
       this.showRecordedPlayer = true;
-      const superBuffer = new Blob(this.recordedBlobs, {
-        type: this.containerType,
-      });
       this.$refs.audioRecorded.src = null;
       this.$refs.audioRecorded.srcObject = null;
-      this.$refs.audioRecorded.src = window.URL.createObjectURL(superBuffer);
+      this.$refs.audioRecorded.src = window.URL.createObjectURL(this.recordedBlobs);
       this.$refs.audioRecorded.controls = true;
       this.$refs.audioRecorded.play();
     },
     // start recoording
     record() {
-      this.recordedBlobs = [];
       this.recorder.start();
       this.isRecording = true;
     },
@@ -115,31 +110,12 @@ export default {
     // initialize MediaRecorder and video element source
     gotStream(mediaStream) {
       this.stream = mediaStream;
-      try {
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        window.audioContext = new AudioContext();
-      } catch (e) {
-        console.error("Web Audio API not supported.");
-      }
-      if (typeof MediaRecorder.isTypeSupported == "function") {
-        let options;
-        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
-          options = { mimeType: "audio/webm;codecs=opus" };
-        } else if (MediaRecorder.isTypeSupported("audio/ogg")) {
-          this.containerType = "audio/ogg";
-          options = { mimeType: "audio/ogg" };
-        } else {
-          this.containerType = "audio/wav";
-          options = { mimeType: "audio/wav" };
-        }
-        this.recorder = new MediaRecorder(mediaStream, options);
-      } else {
-        this.recorder = new MediaRecorder(mediaStream);
-      }
+      this.recorder = new MediaRecorder(mediaStream);
       this.recorder.ondataavailable = this.audioDataHandler;
     },
     audioDataHandler(event) {
-      this.recordedBlobs.push(event.data);
+      console.log('hear here')
+      this.recordedBlobs = event.data;
     },
   },
   unmounted() {

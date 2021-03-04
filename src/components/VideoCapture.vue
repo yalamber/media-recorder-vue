@@ -130,12 +130,6 @@ export default {
     // initialize MediaRecorder and video element source
     gotStream(mediaStream) {
       this.stream = mediaStream;
-      try {
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        window.audioContext = new AudioContext();
-      } catch (e) {
-        console.error("Web Audio API not supported.");
-      }
       if (typeof MediaRecorder.isTypeSupported == "function") {
         let options;
         if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
@@ -159,6 +153,7 @@ export default {
       this.toggleVideo();
     },
     videoDataHandler(event) {
+      console.log('pushing video blobs')
       this.recordedBlobs.push(event.data);
     },
     // toggle video display
