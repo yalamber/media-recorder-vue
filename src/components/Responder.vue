@@ -14,7 +14,6 @@
             <div class="modal-body">
               <input type="text" v-model="email" placeholder="your email address" />
               <div class="media-buttons">
-                Respond in:
                 <button
                   @click="mediaType = 'video'"
                   :class="[(mediaType === 'video' ? 'active' : 'inactive')]"
@@ -88,6 +87,7 @@ export default {
 }
 
 .modal-wrapper {
+  overflow: scroll;
   display: table-cell;
   vertical-align: middle;
 }

@@ -13,7 +13,6 @@
         </template>
       </div>
     </div>
-
     <Loader v-show="isUploading" />
     <div class="controls" v-if="isFinished && !isUploading">
       <button type="button" class="btn" @click.prevent="resetAudio">
@@ -56,7 +55,7 @@ export default {
   },
   data() {
     return {
-      containerType: "video/webm",
+      containerType: "audio/webm",
       errText: null,
       isValid: true,
       isUploading: false,
@@ -90,7 +89,7 @@ export default {
     playRecorded() {
       this.showRecordedPlayer = true;
       const superBuffer = new Blob(this.recordedBlobs, {
-        mimeType : this.containerType,
+        type: this.containerType,
       });
       this.$refs.audioRecorded.src = null;
       this.$refs.audioRecorded.srcObject = null;
@@ -129,6 +128,9 @@ export default {
         } else if (MediaRecorder.isTypeSupported("audio/ogg")) {
           this.containerType = "audio/ogg";
           options = { mimeType: "audio/ogg" };
+        } else {
+          this.containerType = "audio/wav";
+          options = { mimeType: "audio/wav" };
         }
         this.recorder = new MediaRecorder(mediaStream, options);
       } else {

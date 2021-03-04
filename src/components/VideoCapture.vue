@@ -102,7 +102,6 @@ export default {
     },
     playRecorded() {
       this.showRecordedPlayer = true;
-      console.log(this.containerType)
       const superBuffer = new Blob(this.recordedBlobs, {
         type: this.containerType,
       });
