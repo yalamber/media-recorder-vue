@@ -10,6 +10,7 @@
     <canvas v-show="!showVideo" class="preview" ref="canvas" />
     <Loader v-show="isUploading" />
     <div v-if="!hideBtns" class="center photo-capture-actions">
+      <button v-if="showVideo && videoInput > 1" @click="changeCameraFacing" class="btn flip-camera"><font-awesome-icon icon="sync" /></button>
       <button
         :class="'btn flex-center ' + buttonsClasses"
         @click.prevent="capture"
@@ -55,6 +56,9 @@ button.btn {
 video {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+}
+.btn.flip-camera{
+  margin-right: 10px;
 }
 </style>
 <script>
@@ -102,20 +106,30 @@ export default {
       picture: null,
       isValid: true,
       isUploading: false,
+      cameraFacing: "user",
+      videoInput: null
     };
   },
   mounted() {
     this.videoPlayer = this.$refs.player;
     this.canvasElement = this.$refs.canvas;
     this.streamUserMediaVideo();
+    this.countVideoInput();
   },
   methods: {
     streamUserMediaVideo() {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         return;
       }
+      const supports = navigator.mediaDevices.getSupportedConstraints();
+      let constraints = {
+        video: true
+      }
+      if( supports['facingMode'] === true ) {
+        constraints.video = { facingMode: this.cameraFacing }
+      }
       navigator.mediaDevices
-        .getUserMedia({ video: true })
+        .getUserMedia(constraints)
         .then((stream) => (this.videoPlayer.srcObject = stream))
         .catch(() => {
           this.isValid = false;
@@ -148,6 +162,22 @@ export default {
       this.$refs.player.srcObject.getVideoTracks().forEach((track) => {
         track.stop();
       });
+    },
+    countVideoInput() {
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((devices) => {
+          const videoDevices = devices.filter((device)=> {
+            return device.kind === 'videoinput'
+          })
+          this.videoInput = videoDevices.length
+        })
+        .catch((e) => console.log(e));
+    },
+    changeCameraFacing(){
+      this.stopVideoStream();
+      this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
+      this.streamUserMediaVideo();
     },
   },
   beforeDestroy() {
