@@ -102,7 +102,6 @@ export default {
         console.log(supports['facingMode'])
         constraints['video'] = true
       }
-      console.log("const", constraints)
       navigator.mediaDevices
         .getUserMedia(constraints)
         .then(this.gotStream)
@@ -178,14 +177,6 @@ export default {
     },
     changeCameraFacing(){
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
-      // navigator.mediaDevices
-      //   .getUserMedia({
-      //     //video: true,
-      //     video: { facingMode: this.cameraFacing },
-      //     audio: true,
-      //   })
-      //   .then(this.gotStream)
-      //   .catch(() => (this.isValid = false));
       this.resetVideo();
       console.log(this.cameraFacing)
     },
