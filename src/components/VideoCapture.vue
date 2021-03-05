@@ -74,7 +74,7 @@ export default {
       recordedUrl: null,
       showRecordedPlayer: false,
       supportedType: null,
-      cameraFacing: 'user'
+      cameraFacing: this.cameraFacing
     };
   },
   mounted() {
