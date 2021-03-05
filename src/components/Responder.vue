@@ -3,6 +3,7 @@
     <button class="respnod-bttn" id="show-modal" @click="active = true">
       {{ label }} <font-awesome-icon style="color: red" icon="record-vinyl" />
     </button>
+     <VideoCapture/>
     <transition v-if="active" name="modal">
       <div class="modal-mask">
         <div class="modal-wrapper">
@@ -13,7 +14,7 @@
                 <font-awesome-icon icon="window-close" />
               </button>
             </div>
-            <VideoCapture/>
+           
             <!-- <div class="modal-body">
               <input
                 type="text"
