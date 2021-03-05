@@ -12,7 +12,7 @@
       <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
         <template v-if="!isFinished">
-          <button v-if="!isRecording" @click="changeCameraFacing" class="btn"><font-awesome-icon  icon="share-square" /></button>
+          <button v-if="!isRecording" @click="changeCameraFacing" class="btn flip-camera"><font-awesome-icon  icon="sync" /></button>
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }} <font-awesome-icon style="color: red" icon="record-vinyl" />
           </button>
@@ -92,25 +92,21 @@ export default {
       this.isLoading = true;
       this.$refs.videoRec.muted = true;
       const supports = navigator.mediaDevices.getSupportedConstraints();
+      let constraints = {
+        audio: true,
+      };
       if( supports['facingMode'] === true ) {
         console.log(supports['facingMode'])
-        navigator.mediaDevices
-        .getUserMedia({
-          video: { facingMode: this.cameraFacing },
-          audio: true,
-        })
-        .then(this.gotStream)
-        .catch(() => (this.isValid = false));
+        constraints['video'] = { facingMode: this.cameraFacing }
       }else{
         console.log(supports['facingMode'])
-        navigator.mediaDevices
-        .getUserMedia({
-          video: true,
-          audio: true,
-        })
+        constraints['video'] = true
+      }
+      console.log("const", constraints)
+      navigator.mediaDevices
+        .getUserMedia(constraints)
         .then(this.gotStream)
         .catch(() => (this.isValid = false));
-      }
     },
     playRecorded() {
       this.showRecordedPlayer = true;
@@ -239,5 +235,8 @@ button.btn-rec{
 video {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
+}
+.btn.flip-camera{
+  margin-right: 10px;
 }
 </style>
