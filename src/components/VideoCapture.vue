@@ -169,10 +169,8 @@ export default {
       this.$refs.videoRec.loop = !this.$refs.videoRec.loop;
     },
     changeCameraFacing(){
-      console.log(this.cameraFacing)
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user"
-      resetVideo()
-      console.log('changed',this.cameraFacing)
+      this.resetVideo()
     },
   },
   beforeDestroy() {
