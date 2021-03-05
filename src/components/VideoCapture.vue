@@ -169,14 +169,17 @@ export default {
     },
     changeCameraFacing(){
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
-      navigator.mediaDevices
-        .getUserMedia({
-          //video: true,
-          video: { facingMode: this.cameraFacing },
-          audio: true,
-        })
-        .then(this.gotStream)
-        .catch(() => (this.isValid = false));
+      navigator.mediaDevices.getSupportedConstraints({
+        facingMode: this.cameraFacing
+      })
+      // navigator.mediaDevices
+      //   .getUserMedia({
+      //     //video: true,
+      //     video: { facingMode: this.cameraFacing },
+      //     audio: true,
+      //   })
+      //   .then(this.gotStream)
+      //   .catch(() => (this.isValid = false));
       //this.resetVideo();
       console.log(this.cameraFacing)
     },
