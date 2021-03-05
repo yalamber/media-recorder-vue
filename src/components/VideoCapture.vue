@@ -11,8 +11,8 @@
       />
       <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
-        <button v-if="!isRecording" @click="changeCameraFacing" class="btn flip-camera"><font-awesome-icon icon="sync" /></button>
         <template v-if="!isFinished">
+          <button v-if="!isRecording" @click="changeCameraFacing" class="btn flip-camera"><font-awesome-icon icon="sync" /></button>
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }} <font-awesome-icon style="color: red" icon="record-vinyl" />
           </button>
@@ -26,7 +26,7 @@
 
     <Loader v-show="isUploading" />
     <div class="controls" v-if="isFinished && !isUploading">
-      <button type="button" class="btn" @click.prevent="resetVideo">
+      <button type="button" class="btn" @click.prevent="cancel">
         {{ cancelBtnContent }}
       </button>
       <button type="button" class="btn" @click.prevent="upload">
@@ -139,6 +139,10 @@ export default {
       console.log('url', url)
       //this.isUploading = true;
       // this.resetVideo();
+    },
+    cancel() {
+      this.stopTracks()
+      this.resetVideo()
     },
     // initialize MediaRecorder and video element source
     gotStream(mediaStream) {
