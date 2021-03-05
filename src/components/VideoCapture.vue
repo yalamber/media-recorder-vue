@@ -93,7 +93,7 @@ export default {
       this.$refs.videoRec.muted = true;
       navigator.mediaDevices
         .getUserMedia({
-          video: { facingMode: this.cameraFacing },
+          video: {facingMode: {exact: this.cameraFacing}},
           audio: true
         })
         .then(this.gotStream)

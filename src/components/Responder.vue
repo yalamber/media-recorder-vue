@@ -13,7 +13,8 @@
                 <font-awesome-icon icon="window-close" />
               </button>
             </div>
-            <div class="modal-body">
+            <VideoCapture/>
+            <!-- <div class="modal-body">
               <input
                 type="text"
                 v-model="email"
@@ -44,7 +45,7 @@
                 <PhotoCapture v-if="mediaType === 'photo'" />
                 <AudioCapture v-if="mediaType === 'audio'" />
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
