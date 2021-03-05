@@ -12,7 +12,7 @@
       <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
         <template v-if="!isFinished">
-          <button v-if="!isRecording" @click="changeCameraFacing" class="btn flip-camera"><font-awesome-icon  icon="sync" /></button>
+          <button v-if="!isRecording" @click="resetVideo('environment')" class="btn flip-camera"><font-awesome-icon  icon="sync" /></button>
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }} <font-awesome-icon style="color: red" icon="record-vinyl" />
           </button>
@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     // reset video display with media device media stream
-    resetVideo() {
+    resetVideo(facingMode= null) {
       console.log("top", this.cameraFacing);
       this.showRecordedPlayer = false;
       this.recorderBlobs = null;
@@ -97,7 +97,7 @@ export default {
       };
       if( supports['facingMode'] === true ) {
         console.log(supports['facingMode'])
-        constraints['video'] = { facingMode: this.cameraFacing }
+        constraints['video'] = { facingMode: facingMode === null ? this.cameraFacing : facingMode }
       }else{
         console.log(supports['facingMode'])
         constraints['video'] = true
@@ -178,13 +178,6 @@ export default {
     changeCameraFacing(){
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
       console.log(this.cameraFacing)
-      navigator.mediaDevices
-        .getUserMedia({
-          audio: true,
-          video: { facingMode: "environment"}
-        })
-        .then(this.gotStream)
-        .catch(() => (this.isValid = false));
     },
   },
   beforeDestroy() {
