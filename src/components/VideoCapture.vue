@@ -11,11 +11,10 @@
       />
       <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
-        <button v-if="!isRecording" @click="resetVideo" class="btn"><font-awesome-icon  icon="share-square" /></button>
         <template v-if="!isFinished">
+          <button v-if="!isRecording" @click="changeCameraFacing" class="btn"><font-awesome-icon  icon="share-square" /></button>
           <button v-if="!isRecording" @click="record" class="btn flex-center">
-            {{ recordBtnContent }}
-            <font-awesome-icon style="color: red" icon="record-vinyl" />
+            {{ recordBtnContent }} <font-awesome-icon style="color: red" icon="record-vinyl" />
           </button>
           <button v-else @click="stop" class="btn btn-rec">
             <font-awesome-icon style="color: red" icon="stop-circle" />
@@ -74,8 +73,8 @@ export default {
       recordedUrl: null,
       showRecordedPlayer: false,
       supportedType: null,
-      cameraFacing: "environment"
-    };
+      cameraFacing: "user"
+    }
   },
   mounted() {
     this.resetVideo();
@@ -83,7 +82,6 @@ export default {
   methods: {
     // reset video display with media device media stream
     resetVideo() {
-      this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user"
       this.showRecordedPlayer = false;
       this.recorderBlobs = null;
       this.$refs.videoRecorded.src = null;
@@ -94,30 +92,18 @@ export default {
       this.$refs.videoRec.muted = true;
       navigator.mediaDevices
         .getUserMedia({
-          video: {facingMode: {exact: this.cameraFacing}},
-          audio: true
+          //video: true,
+          video: { facingMode: this.cameraFacing },
+          audio: true,
         })
         .then(this.gotStream)
         .catch(() => (this.isValid = false));
-      
-      navigator.mediaDevices
-        .enumerateDevices()
-        .then((devices) => {
-          console.log("devices", devices)
-          const videoDevices = devices.filter((device)=> {
-            return device.kind === 'videoinput'
-          })
-          console.log(videoDevices)
-        })
-        .catch((e) => console.log(e));
     },
     playRecorded() {
       this.showRecordedPlayer = true;
       this.$refs.videoRecorded.src = null;
       this.$refs.videoRecorded.srcObject = null;
-      this.$refs.videoRecorded.src = window.URL.createObjectURL(
-        this.recordedBlobs
-      );
+      this.$refs.videoRecorded.src = window.URL.createObjectURL(this.recordedBlobs);
       this.$refs.videoRecorded.controls = true;
       this.$refs.videoRecorded.play();
     },
@@ -133,17 +119,17 @@ export default {
       this.isFinished = true;
     },
     upload() {
-      const blob = new Blob([this.recordedBlobs], {
-        type: this.supportedType,
-        bitsPerSecond: 128000,
-      });
-      const url = window.URL.createObjectURL(blob);
-
-      let link = document.createElement("a");
+      const blob = new Blob([this.recordedBlobs], { type: this.supportedType, bitsPerSecond:128000});
+      const url = window.URL.createObjectURL(blob)
+      
+      let link = document.createElement('a');
       link.href = url;
-      link.download = new Date().toISOString() + "." + "mp4";
+      link.download = new Date().toISOString() + '.'+'mp4';
       link.innerHTML = link.download;
-      link.click();
+      link.click()
+
+      console.log("blob", blob)
+      console.log('url', url)
       //this.isUploading = true;
       // this.resetVideo();
     },
@@ -163,11 +149,12 @@ export default {
           this.containerType = "video/mp4";
           options = { mimeType: "video/mp4" };
         }
-         this.supportedType = options;
+        this.supportedType = options;
         this.recorder = new MediaRecorder(mediaStream, options);
       } else {
         this.recorder = new MediaRecorder(mediaStream);
       }
+      
       this.recorder.ondataavailable = this.videoDataHandler;
       this.$refs.videoRec.src = null;
       this.$refs.videoRec.srcObject = mediaStream;
@@ -181,7 +168,9 @@ export default {
       this.$refs.videoRec.loop = !this.$refs.videoRec.loop;
     },
     changeCameraFacing(){
-      this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user"
+      this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
+      this.resetVideo();
+      console.log(this.cameraFacing)
     },
   },
   beforeDestroy() {
@@ -213,15 +202,15 @@ button.btn {
   padding: 5px;
   background: #fff;
   color: #000;
-  margin-top: 10px;
+   margin-top: 10px;
 }
-button.btn-rec {
+button.btn-rec{
   padding: 2px 5px;
   border: none;
   outline: none;
   font-size: 46px;
 }
-.video-actions-wrapper p {
+.video-actions-wrapper p{
   font-size: 14px;
   margin: 0px;
   padding: 5px 0 0 0;
