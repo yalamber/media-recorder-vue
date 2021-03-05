@@ -82,7 +82,6 @@ export default {
   methods: {
     // reset video display with media device media stream
     resetVideo() {
-      console.log("top", this.cameraFacing);
       this.showRecordedPlayer = false;
       this.recorderBlobs = null;
       this.$refs.videoRecorded.src = null;
@@ -179,14 +178,11 @@ export default {
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
       console.log(this.cameraFacing)
       this.stopTracks()
-      this.resetVideo()
-      // navigator.mediaDevices
-      //   .getUserMedia({
-      //     audio: true,
-      //     video: { facingMode:  this.cameraFacing}
-      //   })
-      //   .then(this.gotStream)
-      //   .catch(() => (this.isValid = false));
+      //this.resetVideo()
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, facingMode: this.cameraFacing })
+        .then(this.gotStream)
+        .catch(() => (this.isValid = false));
     },
     stopTracks() {
       this.stream.getTracks().forEach(function (track) {
