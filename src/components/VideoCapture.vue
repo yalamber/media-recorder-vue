@@ -177,8 +177,14 @@ export default {
     },
     changeCameraFacing(){
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
-      this.resetVideo();
       console.log(this.cameraFacing)
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: true,
+          video: { facingMode: "environment"}
+        })
+        .then(this.gotStream)
+        .catch(() => (this.isValid = false));
     },
   },
   beforeDestroy() {
