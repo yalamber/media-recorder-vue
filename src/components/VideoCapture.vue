@@ -11,7 +11,7 @@
       />
       <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
-        <button v-if="!isRecording" @click="changeCameraFacing" class="btn"><font-awesome-icon  icon="share-square" /></button>
+        <button v-if="!isRecording" @click="resetVideo" class="btn"><font-awesome-icon  icon="share-square" /></button>
         <template v-if="!isFinished">
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }}
@@ -83,6 +83,7 @@ export default {
   methods: {
     // reset video display with media device media stream
     resetVideo() {
+      this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user"
       this.showRecordedPlayer = false;
       this.recorderBlobs = null;
       this.$refs.videoRecorded.src = null;
@@ -181,7 +182,6 @@ export default {
     },
     changeCameraFacing(){
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user"
-      this.resetVideo()
     },
   },
   beforeDestroy() {
