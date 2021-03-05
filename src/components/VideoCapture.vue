@@ -180,6 +180,7 @@ export default {
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
       console.log(this.cameraFacing)
       this.resetVideo()
+      this.isUploading = false;
     },
     stopTracks() {
       this.stream.getTracks().forEach(function (track) {
