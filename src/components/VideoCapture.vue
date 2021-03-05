@@ -179,14 +179,14 @@ export default {
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
       console.log(this.cameraFacing)
       this.stopTracks()
-      this.resetVideo()
-      // navigator.mediaDevices
-      //   .getUserMedia({
-      //     audio: true,
-      //     video: { facingMode:  this.cameraFacing}
-      //   })
-      //   .then(this.gotStream)
-      //   .catch(() => (this.isValid = false));
+      //this.resetVideo()
+      navigator.mediaDevices
+        .getUserMedia({
+          audio: true,
+          video: { facingMode:  this.cameraFacing}
+        })
+        .then(this.gotStream)
+        .catch(() => (this.isValid = false));
     },
   },
   stopTracks() {
