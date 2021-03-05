@@ -11,7 +11,7 @@
       />
       <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
-        <button @click="changeCameraFacing"><font-awesome-icon  icon="share-square" /></button>
+        <button @click="changeCameraFacing" class="btn"><font-awesome-icon  icon="share-square" /></button>
         <template v-if="!isFinished">
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }}
@@ -74,7 +74,7 @@ export default {
       recordedUrl: null,
       showRecordedPlayer: false,
       supportedType: null,
-      cameraFacing: this.cameraFacing
+      cameraFacing: "user"
     };
   },
   mounted() {
@@ -93,8 +93,8 @@ export default {
       this.$refs.videoRec.muted = true;
       navigator.mediaDevices
         .getUserMedia({
-          audio: true,
-          video: { facingMode: { exact: this.cameraFacing } }
+          video: { facingMode: this.cameraFacing },
+          audio: true
         })
         .then(this.gotStream)
         .catch(() => (this.isValid = false));
@@ -168,9 +168,11 @@ export default {
     toggleVideo() {
       this.$refs.videoRec.loop = !this.$refs.videoRec.loop;
     },
-  },
-  changeCameraFacing(){
-    this.cameraFacing = this.cameraFacing === 'user' ? 'environment' : 'user'
+    changeCameraFacing(){
+      console.log(this.cameraFacing)
+      this.cameraFacing = this.cameraFacing === 'user' ? 'environment' : 'user'
+      console.log('changed',this.cameraFacing)
+    },
   },
   beforeDestroy() {
     this.stream.getTracks().forEach(function (track) {
