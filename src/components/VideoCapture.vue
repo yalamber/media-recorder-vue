@@ -72,6 +72,7 @@ export default {
       recordedBlobs: null,
       recordedUrl: null,
       showRecordedPlayer: false,
+      supportedType: null
     };
   },
   mounted() {
@@ -118,20 +119,8 @@ export default {
       this.isFinished = true;
     },
     upload() {
-      let options;
-      if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
-        options = { mimeType: "video/webm;codecs=vp9" };
-      } else if (MediaRecorder.isTypeSupported("video/webm;codecs=h264")) {
-        options = { mimeType: "video/webm;codecs=h264" };
-      } else if (MediaRecorder.isTypeSupported("video/webm")) {
-        options = { mimeType: "video/webm" };
-      } else if (MediaRecorder.isTypeSupported("video/mp4")) {
-        //Safari 14.0.2 has an EXPERIMENTAL version of MediaRecorder enabled by default
-        this.containerType = "video/mp4";
-        options = { mimeType: "video/mp4" };
-      }
       const blob = new Blob([this.recordedBlobs], {
-        type: options,
+        type: this.supportedType,
         bitsPerSecond: 128000,
       });
       const url = window.URL.createObjectURL(blob);
@@ -141,9 +130,6 @@ export default {
       link.download = new Date().toISOString() + "." + "mp4";
       link.innerHTML = link.download;
       link.click();
-
-      console.log("blob", blob);
-      console.log("url", url);
       //this.isUploading = true;
       // this.resetVideo();
     },
@@ -163,6 +149,7 @@ export default {
           this.containerType = "video/mp4";
           options = { mimeType: "video/mp4" };
         }
+         this.supportedType = options;
         this.recorder = new MediaRecorder(mediaStream, options);
       } else {
         this.recorder = new MediaRecorder(mediaStream);
