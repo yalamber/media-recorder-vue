@@ -92,7 +92,6 @@ export default {
       this.isLoading = true;
       this.$refs.videoRec.muted = true;
       const supports = navigator.mediaDevices.getSupportedConstraints();
-      this.recordBtnContent.default = supports['facingMode']
       if( supports['facingMode'] === true ) {
         console.log(supports['facingMode'])
         navigator.mediaDevices
