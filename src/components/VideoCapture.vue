@@ -92,9 +92,7 @@ export default {
       navigator.mediaDevices
         .getUserMedia({
           audio: true,
-          video: { 
-            facingMode: { exact: "environment" } 
-          }
+          video: { facingMode: { exact: "user" } }
         })
         .then(this.gotStream)
         .catch(() => (this.isValid = false));
