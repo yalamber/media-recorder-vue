@@ -83,6 +83,7 @@ export default {
   methods: {
     // reset video display with media device media stream
     resetVideo() {
+      console.log("Top", this.cameraFacing)
       this.showRecordedPlayer = false;
       this.recorderBlobs = null;
       this.$refs.videoRecorded.src = null;
@@ -171,6 +172,13 @@ export default {
     changeCameraFacing(){
       console.log(this.cameraFacing)
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user"
+      navigator.mediaDevices
+        .getUserMedia({
+          video: { facingMode: this.cameraFacing },
+          audio: true
+        })
+        .then(this.gotStream)
+        .catch(() => (this.isValid = false));
       console.log('changed',this.cameraFacing)
     },
   },
