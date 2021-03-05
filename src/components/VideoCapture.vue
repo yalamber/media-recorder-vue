@@ -11,8 +11,8 @@
       />
       <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
+        <button v-if="!isRecording" @click="changeCameraFacing" class="btn flip-camera"><font-awesome-icon icon="sync" /></button>
         <template v-if="!isFinished">
-          <button v-if="!isRecording" @click="changeCameraFacing" class="btn flip-camera"><font-awesome-icon icon="sync" /></button>
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }} <font-awesome-icon style="color: red" icon="record-vinyl" />
           </button>
@@ -175,6 +175,7 @@ export default {
       this.$refs.videoRec.loop = !this.$refs.videoRec.loop;
     },
     changeCameraFacing(){
+      this.isUploading = true;
       this.stopTracks()
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
       console.log(this.cameraFacing)
