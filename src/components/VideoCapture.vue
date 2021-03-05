@@ -12,7 +12,7 @@
       <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
         <template v-if="!isFinished">
-          <button v-if="!isRecording" @click="changeCameraFacing" class="btn flip-camera"><font-awesome-icon icon="sync" /></button>
+          <button v-if="!isRecording && videoInput > 1" @click="changeCameraFacing" class="btn flip-camera"><font-awesome-icon icon="sync" /></button>
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }} <font-awesome-icon style="color: red" icon="record-vinyl" />
           </button>
@@ -73,11 +73,13 @@ export default {
       recordedUrl: null,
       showRecordedPlayer: false,
       supportedType: null,
-      cameraFacing: "user"
+      cameraFacing: "user",
+      videoInput: null
     }
   },
   mounted() {
     this.resetVideo();
+    this.countVideoInput();
   },
   methods: {
     // reset video display with media device media stream
@@ -141,8 +143,8 @@ export default {
       // this.resetVideo();
     },
     cancel() {
-      this.stopTracks()
-      this.resetVideo()
+      this.stopTracks();
+      this.resetVideo();
     },
     // initialize MediaRecorder and video element source
     gotStream(mediaStream) {
@@ -179,17 +181,25 @@ export default {
       this.$refs.videoRec.loop = !this.$refs.videoRec.loop;
     },
     changeCameraFacing(){
-      this.isUploading = true;
-      this.stopTracks()
+      this.stopTracks();
       this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user";
-      console.log(this.cameraFacing)
-      this.resetVideo()
-      this.isUploading = false;
+      this.resetVideo();
     },
     stopTracks() {
       this.stream.getTracks().forEach(function (track) {
         track.stop();
       });
+    },
+    countVideoInput() {
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((devices) => {
+          const videoDevices = devices.filter((device)=> {
+            return device.kind === 'videoinput'
+          })
+          this.videoInput = videoDevices.length
+        })
+        .catch((e) => console.log(e));
     },
   },
   
