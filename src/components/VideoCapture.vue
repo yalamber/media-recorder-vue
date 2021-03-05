@@ -46,7 +46,8 @@ export default {
   name: "VideoCapture",
   props: {
     recordBtnContent: {
-      default: "Record",
+      //default: "Record",
+      default: this.support()
     },
     cancelBtnContent: {
       default: "Cancel",
@@ -80,6 +81,10 @@ export default {
     this.resetVideo();
   },
   methods: {
+    support() {
+        const supports = navigator.mediaDevices.getSupportedConstraints();
+        return supports['facingMode']
+    },
     // reset video display with media device media stream
     resetVideo() {
       console.log("top", this.cameraFacing);
