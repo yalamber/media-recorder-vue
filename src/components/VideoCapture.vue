@@ -91,14 +91,26 @@ export default {
       this.isRecording = false;
       this.isLoading = true;
       this.$refs.videoRec.muted = true;
-      navigator.mediaDevices
+      const supports = navigator.mediaDevices.getSupportedConstraints();
+      if( supports['facingMode'] === true ) {
+        console.log(supports['facingMode'])
+        navigator.mediaDevices
         .getUserMedia({
-          //video: true,
           video: { facingMode: this.cameraFacing },
           audio: true,
         })
         .then(this.gotStream)
         .catch(() => (this.isValid = false));
+      }else{
+        console.log(supports['facingMode'])
+        navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+          audio: true,
+        })
+        .then(this.gotStream)
+        .catch(() => (this.isValid = false));
+      }
     },
     playRecorded() {
       this.showRecordedPlayer = true;
