@@ -63,7 +63,7 @@ export default {
   },
   data: () => ({
     active: false,
-    mediaType: null,
+    mediaType: "video",
     email: "",
   }),
   components: {

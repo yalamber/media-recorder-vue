@@ -98,6 +98,17 @@ export default {
         })
         .then(this.gotStream)
         .catch(() => (this.isValid = false));
+      
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((devices) => {
+          console.log("devices", devices)
+          const videoDevices = devices.filter((device)=> {
+            return device.kind === 'videoinput'
+          })
+          console.log(videoDevices)
+        })
+        .catch((e) => console.log(e));
     },
     playRecorded() {
       this.showRecordedPlayer = true;
