@@ -11,7 +11,7 @@
       />
       <video ref="videoRecorded" v-show="showRecordedPlayer" playsinline />
       <div class="video-actions-wrapper">
-        <button @click="changeCameraFacing" class="btn"><font-awesome-icon  icon="share-square" /></button>
+        <button v-if="!isRecording" @click="changeCameraFacing" class="btn"><font-awesome-icon  icon="share-square" /></button>
         <template v-if="!isFinished">
           <button v-if="!isRecording" @click="record" class="btn flex-center">
             {{ recordBtnContent }}
