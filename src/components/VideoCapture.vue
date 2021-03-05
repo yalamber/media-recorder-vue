@@ -74,7 +74,7 @@ export default {
       recordedUrl: null,
       showRecordedPlayer: false,
       supportedType: null,
-      cameraFacing: "user"
+      cameraFacing: "environment"
     };
   },
   mounted() {
@@ -170,7 +170,7 @@ export default {
     },
     changeCameraFacing(){
       console.log(this.cameraFacing)
-      this.cameraFacing = this.cameraFacing === 'user' ? 'environment' : 'user'
+      this.cameraFacing = this.cameraFacing === "user" ? "environment" : "user"
       console.log('changed',this.cameraFacing)
     },
   },
